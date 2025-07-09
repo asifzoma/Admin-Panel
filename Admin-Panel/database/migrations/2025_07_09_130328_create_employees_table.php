@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('employees', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('company_id'); // Foreign key column
+            $table->unsignedBigInteger('company_id')->index(); // Add index here
             $table->string('first_name');
             $table->string('last_name');
             $table->string('email')->unique();
