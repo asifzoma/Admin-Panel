@@ -10,6 +10,16 @@
                     <a href="{{ route('companies.create') }}" class="btn btn-primary">Add New Company</a>
                 </div>
                 <div class="card-body">
+                    <form method="GET" action="{{ route('companies.index') }}" class="mb-3">
+                        <div class="input-group">
+                            <input type="text" name="search" class="form-control" placeholder="Search by name or email"
+                                   value="{{ request('search') }}">
+                            <button class="btn btn-outline-secondary" type="submit">Search</button>
+                            @if(request('search'))
+                                <a href="{{ route('companies.index') }}" class="btn btn-outline-danger">Clear</a>
+                            @endif
+                        </div>
+                    </form>
                     @if(session('success'))
                         <div class="alert alert-success">
                             {{ session('success') }}
