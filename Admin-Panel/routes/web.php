@@ -6,14 +6,6 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\CompanyController;
 
-// Redirect root to login or admin dashboard
-Route::get('/', function () {
-    if (Auth::check()) {
-        return redirect('/admin');
-    }
-    return redirect('/login');
-});
-
 // Authentication routes
 Route::get('login', [LoginController::class, 'showLoginForm'])->name('login');
 Route::post('login', [LoginController::class, 'login']);
