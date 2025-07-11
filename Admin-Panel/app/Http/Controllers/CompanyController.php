@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\Company;
+use Illuminate\Support\Facades\Storage;
 
 class CompanyController extends Controller
 {
@@ -34,7 +36,18 @@ class CompanyController extends Controller
             'website' => 'nullable|url',
             'logo' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg,webp|max:2048|dimensions:min_width=100,min_height=100',
         ]);
-        // ... handle file upload and company creation here ...
+
+        // Handle logo upload
+        if ($request->hasFile('logo')) {
+            $logoPath = $request->file('logo')->store('logos', 'public');
+            $validated['logo'] = $logoPath;
+        }
+
+        // Create the company
+        Company::create($validated);
+
+        return redirect()->route('companies.create')
+            ->with('success', 'Company created successfully!');
     }
 
     /**
@@ -62,7 +75,7 @@ class CompanyController extends Controller
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Remove the specified resource in storage.
      */
     public function destroy(string $id)
     {
