@@ -13,7 +13,8 @@ class CompanyController extends Controller
      */
     public function index()
     {
-        //
+        $companies = Company::paginate(10);
+        return view('companies.index', compact('companies'));
     }
 
     /**
@@ -46,7 +47,7 @@ class CompanyController extends Controller
         // Create the company
         Company::create($validated);
 
-        return redirect()->route('companies.create')
+        return redirect()->route('companies.index')
             ->with('success', 'Company created successfully!');
     }
 
@@ -55,7 +56,8 @@ class CompanyController extends Controller
      */
     public function show(string $id)
     {
-        //
+        $company = Company::findOrFail($id);
+        return view('companies.show', compact('company'));
     }
 
     /**
@@ -63,7 +65,8 @@ class CompanyController extends Controller
      */
     public function edit(string $id)
     {
-        //
+        $company = Company::findOrFail($id);
+        return view('companies.edit', compact('company'));
     }
 
     /**
@@ -71,7 +74,30 @@ class CompanyController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        $company = Company::findOrFail($id);
+        
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:companies,email,' . $company->id,
+            'address' => 'required|string|max:255',
+            'website' => 'nullable|url',
+            'logo' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg,webp|max:2048|dimensions:min_width=100,min_height=100',
+        ]);
+
+        // Handle logo upload
+        if ($request->hasFile('logo')) {
+            // Delete old logo if exists
+            if ($company->logo) {
+                Storage::disk('public')->delete($company->logo);
+            }
+            $logoPath = $request->file('logo')->store('logos', 'public');
+            $validated['logo'] = $logoPath;
+        }
+
+        $company->update($validated);
+
+        return redirect()->route('companies.index')
+            ->with('success', 'Company updated successfully!');
     }
 
     /**
@@ -79,6 +105,16 @@ class CompanyController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        $company = Company::findOrFail($id);
+        
+        // Delete logo file if exists
+        if ($company->logo) {
+            Storage::disk('public')->delete($company->logo);
+        }
+        
+        $company->delete();
+
+        return redirect()->route('companies.index')
+            ->with('success', 'Company deleted successfully!');
     }
 }
