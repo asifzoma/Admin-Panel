@@ -35,11 +35,12 @@
                                     <td>{{ $employee->email }}</td>
                                     <td>{{ $employee->phone }}</td>
                                     <td>
-                                        <a href="#" class="btn btn-sm btn-secondary disabled">Edit</a>
-                                        <form action="#" method="POST" class="d-inline">
+                                        <a href="{{ route('employees.show', $employee->id) }}" class="btn btn-sm btn-info">Show</a>
+                                        <a href="{{ route('employees.edit', $employee->id) }}" class="btn btn-sm btn-secondary">Edit</a>
+                                        <form action="{{ route('employees.destroy', $employee->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Are you sure you want to delete this employee?');">
                                             @csrf
                                             @method('DELETE')
-                                            <button type="submit" class="btn btn-sm btn-danger disabled" disabled>Delete</button>
+                                            <button type="submit" class="btn btn-sm btn-danger">Delete</button>
                                         </form>
                                     </td>
                                 </tr>

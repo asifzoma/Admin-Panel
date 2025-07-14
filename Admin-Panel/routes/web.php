@@ -21,6 +21,9 @@ Route::middleware(['auth', 'admin'])->group(function () {
     
     // Companies resource routes (admin only)
     Route::resource('companies', CompanyController::class)->except(['create', 'store']);
+
+    // Employees resource routes (admin only)
+    Route::resource('employees', App\Http\Controllers\EmployeeController::class);
 });
 
 // Public companies routes

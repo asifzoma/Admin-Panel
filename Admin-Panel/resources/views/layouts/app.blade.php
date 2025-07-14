@@ -32,6 +32,13 @@
                         </a>
                     </li>
                     @auth
+                    <li class="nav-item">
+                        <a class="nav-link {{ request()->routeIs('employees.index') ? 'active' : '' }}" href="{{ route('employees.index') }}">
+                            <i class="fas fa-users me-1"></i>Employees
+                        </a>
+                    </li>
+                    @endauth
+                    @auth
                         <li class="nav-item">
                             <a class="nav-link {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}" href="{{ route('admin.dashboard') }}">
                                 <i class="fas fa-tachometer-alt me-1"></i>Dashboard
