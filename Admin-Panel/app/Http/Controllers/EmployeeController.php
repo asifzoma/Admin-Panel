@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Employee;
 use App\Models\Company;
 use Illuminate\Http\Request;
+use App\Http\Requests\EmployeeStoreRequest;
+use App\Http\Requests\EmployeeUpdateRequest;
 
 class EmployeeController extends Controller
 {
@@ -29,18 +31,10 @@ class EmployeeController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(EmployeeStoreRequest $request)
     {
-        $validated = $request->validate([
-            'first_name' => 'required|string|max:255',
-            'last_name' => 'required|string|max:255',
-            'company_id' => 'required|exists:companies,id',
-            'email' => 'nullable|email|max:255',
-            'phone' => 'nullable|string|max:255',
-        ]);
-
+        $validated = $request->validated();
         Employee::create($validated);
-
         return redirect()->route('employees.index')->with('success', 'Employee created successfully.');
     }
 
@@ -66,19 +60,11 @@ class EmployeeController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, $id)
+    public function update(EmployeeUpdateRequest $request, $id)
     {
-        $validated = $request->validate([
-            'first_name' => 'required|string|max:255',
-            'last_name' => 'required|string|max:255',
-            'company_id' => 'required|exists:companies,id',
-            'email' => 'nullable|email|max:255',
-            'phone' => 'nullable|string|max:255',
-        ]);
-
         $employee = Employee::findOrFail($id);
+        $validated = $request->validated();
         $employee->update($validated);
-
         return redirect()->route('employees.show', $employee->id)->with('success', 'Employee updated successfully.');
     }
 
