@@ -1,5 +1,15 @@
 @extends('layouts.app')
 
+@section('breadcrumbs')
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb my-3">
+    <li class="breadcrumb-item"><a href="{{ route('employees.index') }}">Home</a></li>
+    <li class="breadcrumb-item"><a href="{{ route('employees.index') }}">Employees</a></li>
+    <li class="breadcrumb-item active" aria-current="page">Show</li>
+  </ol>
+</nav>
+@endsection
+
 @section('content')
 <div class="container mt-5">
     <div class="row justify-content-center">
