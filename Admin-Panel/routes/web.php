@@ -5,27 +5,24 @@ use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\CompanyController;
+use App\Http\Controllers\EmployeeController;
 
 // Authentication routes
 Route::get('login', [LoginController::class, 'showLoginForm'])->name('login');
 Route::post('login', [LoginController::class, 'login']);
 Route::post('logout', [LoginController::class, 'logout'])->name('logout');
 
-// Public routes
-Route::get('/', [CompanyController::class, 'create'])->name('companies.create');
-Route::post('/companies', [CompanyController::class, 'store'])->name('companies.store');
-
-// Admin dashboard (protected by admin middleware)
+// Admin routes (protected by auth and admin middleware)
 Route::middleware(['auth', 'admin'])->group(function () {
     Route::get('/admin', [AdminController::class, 'index'])->name('admin.dashboard');
-    
-    // Companies resource routes (admin only)
-    Route::resource('companies', CompanyController::class)->except(['create', 'store']);
-
-    // Employees resource routes (admin only)
-    Route::resource('employees', App\Http\Controllers\EmployeeController::class);
+    Route::resource('companies', CompanyController::class);
+    Route::resource('employees', EmployeeController::class);
 });
 
-// Public companies routes
-Route::get('/companies', [CompanyController::class, 'index'])->name('companies.index');
-Route::get('/companies/{company}', [CompanyController::class, 'show'])->name('companies.show');
+// Redirect root to admin dashboard if authenticated, otherwise to login
+Route::get('/', function () {
+    if (Auth::check() && Auth::user()->is_admin) {
+        return redirect()->route('admin.dashboard');
+    }
+    return redirect()->route('login');
+});
