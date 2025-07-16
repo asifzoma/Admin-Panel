@@ -6,6 +6,8 @@ class AdminController extends Controller
 {
     public function index()
     {
-        return view('admin.dashboard');
+        $companyCount = \App\Models\Company::count();
+        $employeeCount = \App\Models\Employee::count();
+        return view('admin.dashboard', compact('companyCount', 'employeeCount'));
     }
 } 
