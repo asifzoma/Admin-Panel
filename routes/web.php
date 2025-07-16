@@ -26,3 +26,7 @@ Route::get('/', function () {
     }
     return redirect()->route('login');
 });
+
+Route::get('/home', function () {
+    return view('home');
+})->name('home');
