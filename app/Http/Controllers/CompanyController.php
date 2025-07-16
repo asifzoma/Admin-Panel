@@ -48,7 +48,15 @@ class CompanyController extends Controller
             $logoPath = $request->file('logo')->store('logos', 'public');
             $validated['logo'] = $logoPath;
         }
-        Company::create($validated);
+        $company = Company::create($validated);
+        // Log activity
+        \App\Models\ActivityLog::create([
+            'user_id' => auth()->id(),
+            'action' => 'create',
+            'subject_type' => 'Company',
+            'subject_id' => $company->id,
+            'description' => 'Created company #' . $company->id,
+        ]);
         return redirect()->route('companies.index')
             ->with('success', 'Company created successfully!');
     }
@@ -87,6 +95,14 @@ class CompanyController extends Controller
             $validated['logo'] = $logoPath;
         }
         $company->update($validated);
+        // Log activity
+        \App\Models\ActivityLog::create([
+            'user_id' => auth()->id(),
+            'action' => 'update',
+            'subject_type' => 'Company',
+            'subject_id' => $company->id,
+            'description' => 'Updated company #' . $company->id,
+        ]);
         return redirect()->route('companies.index')
             ->with('success', 'Company updated successfully!');
     }
@@ -104,6 +120,14 @@ class CompanyController extends Controller
         }
         
         $company->delete();
+        // Log activity
+        \App\Models\ActivityLog::create([
+            'user_id' => auth()->id(),
+            'action' => 'delete',
+            'subject_type' => 'Company',
+            'subject_id' => $company->id,
+            'description' => 'Deleted company #' . $company->id,
+        ]);
 
         return redirect()->route('companies.index')
             ->with('success', 'Company deleted successfully!');

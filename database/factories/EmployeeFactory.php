@@ -22,6 +22,7 @@ class EmployeeFactory extends Factory
             'last_name' => $this->faker->lastName(),
             'email' => $this->faker->unique()->safeEmail(),
             'phone' => $this->faker->phoneNumber(),
+            'hire_date' => $this->faker->dateTimeBetween('-5 years', 'now')->format('Y-m-d'),
         ];
     }
 }

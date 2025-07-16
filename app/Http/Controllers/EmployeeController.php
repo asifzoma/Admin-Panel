@@ -34,7 +34,15 @@ class EmployeeController extends Controller
     public function store(EmployeeStoreRequest $request)
     {
         $validated = $request->validated();
-        Employee::create($validated);
+        $employee = Employee::create($validated);
+        // Log activity
+        \App\Models\ActivityLog::create([
+            'user_id' => auth()->id(),
+            'action' => 'create',
+            'subject_type' => 'Employee',
+            'subject_id' => $employee->id,
+            'description' => 'Created employee #' . $employee->id,
+        ]);
         return redirect()->route('employees.index')->with('success', 'Employee created successfully.');
     }
 
@@ -65,6 +73,14 @@ class EmployeeController extends Controller
         $employee = Employee::findOrFail($id);
         $validated = $request->validated();
         $employee->update($validated);
+        // Log activity
+        \App\Models\ActivityLog::create([
+            'user_id' => auth()->id(),
+            'action' => 'update',
+            'subject_type' => 'Employee',
+            'subject_id' => $employee->id,
+            'description' => 'Updated employee #' . $employee->id,
+        ]);
         return redirect()->route('employees.show', $employee->id)->with('success', 'Employee updated successfully.');
     }
 
@@ -75,6 +91,14 @@ class EmployeeController extends Controller
     {
         $employee = Employee::findOrFail($id);
         $employee->delete();
+        // Log activity
+        \App\Models\ActivityLog::create([
+            'user_id' => auth()->id(),
+            'action' => 'delete',
+            'subject_type' => 'Employee',
+            'subject_id' => $employee->id,
+            'description' => 'Deleted employee #' . $employee->id,
+        ]);
         return redirect()->route('employees.index')->with('success', 'Employee deleted successfully.');
     }
 }
