@@ -47,9 +47,13 @@
                         </div>
                         <div class="mb-3">
                             <label for="logo" class="form-label">Logo</label>
-                            @if($company->logo)
+                            @if($company->logo && Storage::disk('public')->exists($company->logo))
                                 <div class="mb-2">
-                                    <img src="{{ Storage::url($company->logo) }}" alt="{{ $company->name }}" class="img-thumbnail" style="width:100px; height:100px; object-fit:cover;">
+                                    <img src="{{ asset('storage/' . $company->logo) }}" 
+                                         alt="{{ $company->name }}" 
+                                         class="img-thumbnail" 
+                                         style="width:100px; height:100px; object-fit:cover;"
+                                         onerror="this.onerror=null; this.src='{{ asset('images/default-company.png') }}'; this.classList.remove('img-thumbnail');">
                                 </div>
                             @endif
                             <input type="file" class="form-control" id="logo" name="logo" accept="image/*">
