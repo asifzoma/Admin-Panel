@@ -12,7 +12,9 @@
     <!-- Page Wrapper -->
     <div id="wrapper">
         <!-- Sidebar -->
-        @include('partials.sidebar')
+        @auth
+            @include('partials.sidebar')
+        @endauth
         <!-- End of Sidebar -->
 
         <!-- Content Wrapper -->
