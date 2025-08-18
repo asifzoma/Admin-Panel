@@ -42,5 +42,55 @@
     <script src="{{ asset('vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
     <script src="{{ asset('js/sb-admin-2.min.js') }}"></script>
     @stack('scripts')
+    
+    <script>
+        // Helper function to handle company logo display with fallback
+        function displayCompanyLogo(imgElement, logoPath, companyName, size = '50px') {
+            if (logoPath && logoPath.trim() !== '') {
+                imgElement.src = logoPath;
+                imgElement.alt = companyName + ' logo';
+                imgElement.style.width = size;
+                imgElement.style.height = size;
+                imgElement.style.objectFit = 'cover';
+                imgElement.classList.add('img-thumbnail');
+                
+                // Add error handler for broken images
+                imgElement.onerror = function() {
+                    this.src = '{{ asset("images/default-company.svg") }}';
+                    this.alt = 'Default company logo';
+                    this.classList.remove('img-thumbnail');
+                    this.classList.add('default-logo');
+                };
+            } else {
+                // No logo provided, show default
+                imgElement.src = '{{ asset("images/default-company.svg") }}';
+                imgElement.alt = 'Default company logo';
+                imgElement.style.width = size;
+                imgElement.style.height = size;
+                imgElement.classList.remove('img-thumbnail');
+                imgElement.classList.add('default-logo');
+            }
+        }
+    </script>
+    
+    <style>
+        .default-logo {
+            background: linear-gradient(135deg, #4e73df 0%, #224abe 100%);
+            border-radius: 8px;
+            padding: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .company-logo-placeholder {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #4e73df 0%, #224abe 100%);
+            color: white;
+            border-radius: 8px;
+            font-size: 1.2em;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+    </style>
 </body>
 </html> 

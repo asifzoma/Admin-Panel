@@ -51,18 +51,7 @@
                                     @foreach($companies as $company)
                                         <tr>
                                             <td>
-                                                @if($company->logo && Storage::disk('public')->exists($company->logo))
-                                                    <img src="{{ asset('storage/' . $company->logo) }}" 
-                                                         alt="{{ $company->name }}" 
-                                                         class="img-thumbnail" 
-                                                         style="width: 50px; height: 50px; object-fit: cover;"
-                                                         onerror="this.onerror=null; this.src='{{ asset('images/default-company.png') }}'; this.classList.remove('img-thumbnail');">
-                                                @else
-                                                    <div class="bg-secondary text-white d-flex align-items-center justify-content-center rounded" 
-                                                         style="width: 50px; height: 50px;">
-                                                        <i class="fas fa-building"></i>
-                                                    </div>
-                                                @endif
+                                                <x-company-logo :company="$company" size="50px" />
                                             </td>
                                             <td>{{ $company->name }}</td>
                                             <td>{{ $company->email }}</td>

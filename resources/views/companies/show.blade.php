@@ -19,9 +19,9 @@
                     <h4>{{ $company->name }}</h4>
                 </div>
                 <div class="card-body">
-                    @if($company->logo)
-                        <img src="{{ Storage::url($company->logo) }}" alt="{{ $company->name }}" class="img-thumbnail mb-3" style="width:100px; height:100px; object-fit:cover;">
-                    @endif
+                    <div class="text-center mb-4">
+                        <x-company-logo :company="$company" size="150px" class="mb-3" />
+                    </div>
                     <ul class="list-group">
                         <li class="list-group-item"><strong>Email:</strong> {{ $company->email }}</li>
                         <li class="list-group-item"><strong>Address:</strong> {{ $company->address }}</li>
