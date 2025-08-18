@@ -23,7 +23,7 @@
                         <div class="input-group">
                             <input type="text" name="search" class="form-control" placeholder="Search by name or email"
                                    value="{{ request('search') }}">
-                            <button class="btn btn-outline-secondary" type="submit">Search</button>
+                            <button class="btn btn-outline-secondary rounded-0 rounded-end" type="submit">Search</button>
                             @if(request('search'))
                                 <a href="{{ route('companies.index') }}" class="btn btn-outline-danger">Clear</a>
                             @endif
