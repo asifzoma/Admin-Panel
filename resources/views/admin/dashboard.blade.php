@@ -4,7 +4,7 @@
 <div class="container py-5">
     <div class="row mb-4">
         <div class="col-12 text-center">
-            <img src="/images/admin-genie.png" alt="Admin Genie" style="height:80px;">
+            <img src="{{ asset('images/admin-genie.png') }}" alt="Admin Genie" style="height:80px;">
             <p class="text-muted mt-3">
                 <strong>Dashboard Analytics:</strong><br>
                 Company growth and employee hire trends, admin activity over time, most and least recently updated companies, company size comparison, login frequency, and a log of recent actions are visualized below for actionable insights.

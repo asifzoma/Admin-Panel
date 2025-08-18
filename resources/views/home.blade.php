@@ -4,7 +4,7 @@
 <div class="container py-5">
     <div class="row mb-4">
         <div class="col-12 text-center">
-            <img src="/images/admin-genie.png" alt="Admin Genie" style="height:80px;">
+            <img src="{{ asset('images/admin-genie.png') }}" alt="Admin Genie" style="height:80px;">
             <h1 class="display-5 fw-bold mt-3">Welcome to Admin Genie!</h1>
             <p class="lead">Manage companies and employees with ease. Add, edit, and organize your business data in one magical place.</p>
         </div>

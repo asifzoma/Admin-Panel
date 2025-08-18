@@ -1,8 +1,8 @@
 <ul class="navbar-nav sidebar sidebar-dark accordion text-white" id="accordionSidebar" style="background-color: #0f3556;">
     <!-- Sidebar - Brand -->
-    <a class="sidebar-brand d-flex align-items-center justify-content-center text-white" href="{{ route('home') }}">
-        <div class="sidebar-brand-icon rotate-n-15">
-            <i class="fas fa-magic"></i>
+    <a class="sidebar-brand d-flex align-items-center justify-content-center text-white" href="{{ route('admin.dashboard') }}">
+        <div class="sidebar-brand-icon">
+            <img src="{{ asset('images/admin-genie.png') }}" alt="Admin Genie" style="height: 32px; width: auto;">
         </div>
         <div class="sidebar-brand-text mx-3">Admin Genie</div>
     </a>
