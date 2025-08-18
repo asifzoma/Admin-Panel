@@ -74,23 +74,13 @@
                                                 @endif
                                             </td>
                                             <td>
-                                                <div class="btn-group" role="group">
-                                                    <a href="{{ route('companies.show', $company) }}" 
-                                                       class="btn btn-sm btn-info">View</a>
-                                                    <a href="{{ route('companies.edit', $company) }}" 
-                                                       class="btn btn-sm btn-warning">Edit</a>
-                                                    <form action="{{ route('companies.destroy', $company) }}" 
-                                                          method="POST" 
-                                                          style="display: inline;">
-                                                        @csrf
-                                                        @method('DELETE')
-                                                        <button type="submit" 
-                                                                class="btn btn-sm btn-danger rounded-0 rounded-end" 
-                                                                onclick="return confirm('Are you sure you want to delete this company?')">
-                                                            Delete
-                                                        </button>
-                                                    </form>
-                                                </div>
+                                                <a href="{{ route('companies.show', $company) }}" class="btn btn-sm btn-info">Show</a>
+                                                <a href="{{ route('companies.edit', $company) }}" class="btn btn-sm btn-secondary">Edit</a>
+                                                <form action="{{ route('companies.destroy', $company) }}" method="POST" class="d-inline" onsubmit="return confirm('Are you sure you want to delete this company?');">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+                                                </form>
                                             </td>
                                         </tr>
                                     @endforeach
