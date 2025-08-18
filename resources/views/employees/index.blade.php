@@ -19,6 +19,16 @@
                     <a href="{{ route('employees.create') }}" class="btn btn-primary">Add New Employee</a>
                 </div>
                 <div class="card-body">
+                    <form method="GET" action="{{ route('employees.index') }}" class="mb-3">
+                        <div class="input-group">
+                            <input type="text" name="search" class="form-control" placeholder="Search by name or email"
+                                   value="{{ request('search') }}">
+                            <button class="btn btn-outline-secondary rounded-0 rounded-end" type="submit">Search</button>
+                            @if(request('search'))
+                                <a href="{{ route('employees.index') }}" class="btn btn-outline-danger">Clear</a>
+                            @endif
+                        </div>
+                    </form>
                     @if(session('success'))
                         <div class="alert alert-success">
                             {{ session('success') }}
