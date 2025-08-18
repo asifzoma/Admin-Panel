@@ -39,7 +39,7 @@
                         </div>
                         <div class="mb-3">
                             <label for="company_id" class="form-label">Company</label>
-                            <select class="form-select" id="company_id" name="company_id" required>
+                            <select class="form-control" id="company_id" name="company_id" required>
                                 <option value="">Select Company</option>
                                 @foreach($companies as $company)
                                     <option value="{{ $company->id }}" {{ old('company_id', $employee->company_id) == $company->id ? 'selected' : '' }}>{{ $company->name }}</option>
