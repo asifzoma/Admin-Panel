@@ -86,13 +86,28 @@ class CompanyController extends Controller
     {
         $company = Company::findOrFail($id);
         $validated = $request->validated();
+        
         // Handle logo upload
         if ($request->hasFile('logo')) {
-            if ($company->logo) {
-                Storage::disk('public')->delete($company->logo);
+            try {
+                // Delete old logo if it exists
+                if ($company->logo && Storage::disk('public')->exists($company->logo)) {
+                    Storage::disk('public')->delete($company->logo);
+                }
+                
+                // Store the new logo with original filename
+                $file = $request->file('logo');
+                $filename = time() . '_' . $file->getClientOriginalName();
+                $logoPath = $file->storeAs('logos', $filename, 'public');
+                
+                if (!$logoPath) {
+                    return back()->with('error', 'Failed to upload logo. Please try again.');
+                }
+                
+                $validated['logo'] = $logoPath;
+            } catch (\Exception $e) {
+                return back()->with('error', 'Error uploading logo: ' . $e->getMessage());
             }
-            $logoPath = $request->file('logo')->store('logos', 'public');
-            $validated['logo'] = $logoPath;
         }
         $company->update($validated);
         // Log activity
