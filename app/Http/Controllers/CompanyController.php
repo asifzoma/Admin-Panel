@@ -67,7 +67,8 @@ class CompanyController extends Controller
     public function show(string $id)
     {
         $company = Company::findOrFail($id);
-        return view('companies.show', compact('company'));
+        $employees = $company->employees()->paginate(10);
+        return view('companies.show', compact('company', 'employees'));
     }
 
     /**

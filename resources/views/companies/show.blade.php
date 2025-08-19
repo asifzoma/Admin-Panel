@@ -39,6 +39,50 @@
                     </div>
                 </div>
             </div>
+
+            <!-- Employees List -->
+            <div class="card mt-4">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">Employees</h5>
+                    <a href="{{ route('employees.create') }}" class="btn btn-primary btn-sm">Add Employee</a>
+                </div>
+                <div class="card-body">
+                    @if($employees->count() > 0)
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Email</th>
+                                        <th>Phone</th>
+                                        <th>Hire Date</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach($employees as $employee)
+                                        <tr>
+                                            <td>{{ $employee->full_name }}</td>
+                                            <td>{{ $employee->email }}</td>
+                                            <td>{{ $employee->phone }}</td>
+                                            <td>{{ $employee->hire_date ? $employee->hire_date->format('M d, Y') : 'N/A' }}</td>
+                                            <td>
+                                                <a href="{{ route('employees.show', $employee) }}" class="btn btn-info btn-sm">View</a>
+                                                <a href="{{ route('employees.edit', $employee) }}" class="btn btn-warning btn-sm">Edit</a>
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="mt-3">
+                            {{ $employees->links() }}
+                        </div>
+                    @else
+                        <p class="text-muted mb-0">No employees found for this company.</p>
+                    @endif
+                </div>
+            </div>
         </div>
     </div>
 </div>

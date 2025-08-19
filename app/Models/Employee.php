@@ -21,4 +21,12 @@ class Employee extends Model
     {
         return $this->belongsTo(Company::class);
     }
+
+    /**
+     * Get the employee's full name.
+     */
+    public function getFullNameAttribute()
+    {
+        return ucfirst($this->first_name) . ' ' . ucfirst($this->last_name);
+    }
 }
