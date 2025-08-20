@@ -35,6 +35,12 @@
                         </div>
                     @endif
 
+                    @if(session('error'))
+                        <div class="alert alert-danger">
+                            {{ session('error') }}
+                        </div>
+                    @endif
+
                     @if($companies->count() > 0)
                         <div class="table-responsive">
                             <table class="table table-striped">
