@@ -130,6 +130,12 @@ class CompanyController extends Controller
     {
         $company = Company::findOrFail($id);
         
+        // Check if company has employees
+        if ($company->employees()->count() > 0) {
+            return redirect()->route('companies.index')
+                ->with('error', 'Cannot delete company. It has employees assigned to it. Please remove all employees first.');
+        }
+        
         // Delete logo file if exists
         if ($company->logo) {
             Storage::disk('public')->delete($company->logo);
