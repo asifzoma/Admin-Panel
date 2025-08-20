@@ -43,7 +43,7 @@
 
                     @if($companies->count() > 0)
                         <div class="table-responsive">
-                            <table class="table table-striped">
+                            <table class="table table-striped mobile-table">
                                 <thead>
                                     <tr>
                                         <th>Logo</th>
@@ -56,19 +56,19 @@
                                 <tbody>
                                     @foreach($companies as $company)
                                         <tr>
-                                            <td>
+                                            <td data-label="Logo">
                                                 <x-company-logo :company="$company" size="50px" />
                                             </td>
-                                            <td>{{ $company->name }}</td>
-                                            <td>{{ $company->email }}</td>
-                                            <td>
+                                            <td data-label="Name">{{ $company->name }}</td>
+                                            <td data-label="Email">{{ $company->email }}</td>
+                                            <td data-label="Website">
                                                 @if($company->website)
                                                     <a href="{{ $company->website }}" target="_blank">{{ $company->website }}</a>
                                                 @else
                                                     <span class="text-muted">No website</span>
                                                 @endif
                                             </td>
-                                            <td>
+                                            <td data-label="Actions" class="actions-cell">
                                                 <a href="{{ route('companies.show', $company) }}" class="btn btn-sm btn-info">Show</a>
                                                 <a href="{{ route('companies.edit', $company) }}" class="btn btn-sm btn-secondary">Edit</a>
                                                 <form action="{{ route('companies.destroy', $company) }}" method="POST" class="d-inline" onsubmit="return confirm('Are you sure you want to delete this company?');">

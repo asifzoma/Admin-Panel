@@ -40,7 +40,7 @@
                             {{ session('error') }}
                         </div>
                     @endif
-                    <table class="table table-bordered table-striped">
+                    <table class="table table-bordered table-striped mobile-table">
                         <thead>
                             <tr>
                                 <th>First Name</th>
@@ -54,12 +54,12 @@
                         <tbody>
                             @forelse($employees as $employee)
                                 <tr>
-                                    <td>{{ $employee->first_name }}</td>
-                                    <td>{{ $employee->last_name }}</td>
-                                    <td>{{ $employee->company->name ?? '-' }}</td>
-                                    <td>{{ $employee->email }}</td>
-                                    <td>{{ $employee->phone }}</td>
-                                    <td>
+                                    <td data-label="First Name">{{ $employee->first_name }}</td>
+                                    <td data-label="Last Name">{{ $employee->last_name }}</td>
+                                    <td data-label="Company">{{ $employee->company->name ?? '-' }}</td>
+                                    <td data-label="Email">{{ $employee->email }}</td>
+                                    <td data-label="Phone">{{ $employee->phone }}</td>
+                                    <td data-label="Actions" class="actions-cell">
                                         <a href="{{ route('employees.show', $employee->id) }}" class="btn btn-sm btn-info">Show</a>
                                         <a href="{{ route('employees.edit', $employee->id) }}" class="btn btn-sm btn-secondary">Edit</a>
                                         <form action="{{ route('employees.destroy', $employee->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Are you sure you want to delete this employee?');">
