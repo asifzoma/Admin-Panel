@@ -9,23 +9,23 @@ class AdminController extends Controller
         $companyCount = \App\Models\Company::count();
         $employeeCount = \App\Models\Employee::count();
 
-        // Company creation trend (last 12 months)
-        $companyTrends = \App\Models\Company::selectRaw('DATE_FORMAT(created_at, "%Y-%m") as month, COUNT(*) as count')
+        // Company creation trend (last 12 months) - SQLite compatible
+        $companyTrends = \App\Models\Company::selectRaw('strftime("%Y-%m", created_at) as month, COUNT(*) as count')
             ->where('created_at', '>=', now()->subMonths(12))
             ->groupBy('month')
             ->orderBy('month')
             ->pluck('count', 'month');
 
-        // Employee hire trend (last 12 months)
-        $employeeTrends = \App\Models\Employee::selectRaw('DATE_FORMAT(hire_date, "%Y-%m") as month, COUNT(*) as count')
+        // Employee hire trend (last 12 months) - SQLite compatible
+        $employeeTrends = \App\Models\Employee::selectRaw('strftime("%Y-%m", hire_date) as month, COUNT(*) as count')
             ->whereNotNull('hire_date')
             ->where('hire_date', '>=', now()->subMonths(12))
             ->groupBy('month')
             ->orderBy('month')
             ->pluck('count', 'month');
 
-        // Activity log trend (last 12 months)
-        $activityTrends = \App\Models\ActivityLog::selectRaw('DATE_FORMAT(created_at, "%Y-%m") as month, COUNT(*) as count')
+        // Activity log trend (last 12 months) - SQLite compatible
+        $activityTrends = \App\Models\ActivityLog::selectRaw('strftime("%Y-%m", created_at) as month, COUNT(*) as count')
             ->where('created_at', '>=', now()->subMonths(12))
             ->groupBy('month')
             ->orderBy('month')
@@ -41,10 +41,10 @@ class AdminController extends Controller
             ->take(5)
             ->get();
 
-        // Login frequency (last 30 days)
+        // Login frequency (last 30 days) - SQLite compatible
         $loginFrequency = \App\Models\ActivityLog::where('action', 'login')
             ->where('created_at', '>=', now()->subDays(30))
-            ->selectRaw('DATE(created_at) as day, COUNT(*) as count')
+            ->selectRaw('date(created_at) as day, COUNT(*) as count')
             ->groupBy('day')
             ->orderBy('day')
             ->pluck('count', 'day');
