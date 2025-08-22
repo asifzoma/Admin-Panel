@@ -18,11 +18,11 @@ class EmployeeFactory extends Factory
     {
         return [
             'company_id' => \App\Models\Company::factory(),
-            'first_name' => $this->faker->firstName(),
-            'last_name' => $this->faker->lastName(),
-            'email' => $this->faker->unique()->safeEmail(),
-            'phone' => $this->faker->phoneNumber(),
-            'hire_date' => $this->faker->dateTimeBetween('-5 years', 'now')->format('Y-m-d'),
+            'first_name' => fake()->firstName(),
+            'last_name' => fake()->lastName(),
+            'email' => fake()->unique()->safeEmail(),
+            'phone' => fake()->phoneNumber(),
+            'hire_date' => fake()->dateTimeBetween('-5 years', 'now')->format('Y-m-d'),
         ];
     }
 }

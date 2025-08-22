@@ -29,7 +29,7 @@ class UserFactory extends Factory
             'email_verified_at' => now(),
             'password' => static::$password ??= Hash::make('password'),
             'remember_token' => Str::random(10),
-            'last_login_at' => $this->faker->dateTimeBetween('-1 year', 'now'),
+            'last_login_at' => fake()->dateTimeBetween('-1 year', 'now'),
         ];
     }
 

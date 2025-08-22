@@ -15,6 +15,11 @@ class Employee extends Model
         'last_name',
         'email',
         'phone',
+        'hire_date',
+    ];
+
+    protected $casts = [
+        'hire_date' => 'date',
     ];
 
     public function company()

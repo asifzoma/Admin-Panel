@@ -16,14 +16,16 @@ class CompanyFactory extends Factory
      */
     public function definition(): array
     {
+        $created = fake()->dateTimeBetween('-5 years', 'now');
+        
         return [
-            'name' => $this->faker->company(),
-            'email' => $this->faker->unique()->companyEmail(),
-            'address' => $this->faker->address(),
-            'website' => $this->faker->url(),
-            'logo' => $this->faker->imageUrl(200, 200, 'business', true, 'logo'),
-            'created_at' => $created = $this->faker->dateTimeBetween('-5 years', 'now'),
-            'updated_at' => $this->faker->dateTimeBetween($created, 'now'),
+            'name' => fake()->company(),
+            'email' => fake()->unique()->companyEmail(),
+            'address' => fake()->address(),
+            'website' => fake()->url(),
+            'logo' => fake()->imageUrl(200, 200, 'business', true, 'logo'),
+            'created_at' => $created,
+            'updated_at' => fake()->dateTimeBetween($created, 'now'),
         ];
     }
 }
