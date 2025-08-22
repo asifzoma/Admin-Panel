@@ -8,35 +8,37 @@
     <link href="{{ asset('vendor/fontawesome-free/css/all.min.css') }}" rel="stylesheet">
     <link href="{{ asset('css/sb-admin-2.min.css') }}" rel="stylesheet">
 </head>
-<body id="page-top">
-    <!-- Page Wrapper -->
-    <div id="wrapper">
-        <!-- Sidebar -->
-        @auth
+<body id="page-top" class="{{ !auth()->check() ? 'bg-gradient-primary' : '' }}">
+    @auth
+        <!-- Page Wrapper -->
+        <div id="wrapper">
+            <!-- Sidebar -->
             @include('partials.sidebar')
-        @endauth
-        <!-- End of Sidebar -->
+            <!-- End of Sidebar -->
 
-        <!-- Content Wrapper -->
-        <div id="content-wrapper" class="d-flex flex-column">
-            <!-- Main Content -->
-            <div id="content">
-                <!-- Topbar -->
-                @include('partials.topbar')
-                <!-- End of Topbar -->
+            <!-- Content Wrapper -->
+            <div id="content-wrapper" class="d-flex flex-column">
+                <!-- Main Content -->
+                <div id="content">
+                    <!-- Topbar -->
+                    @include('partials.topbar')
+                    <!-- End of Topbar -->
 
-                <!-- Begin Page Content -->
-                <div class="container-fluid">
-                    @yield('breadcrumbs')
-                    @yield('content')
+                    <!-- Begin Page Content -->
+                    <div class="container-fluid">
+                        @yield('breadcrumbs')
+                        @yield('content')
+                    </div>
+                    <!-- End Page Content -->
                 </div>
-                <!-- End Page Content -->
+                <!-- End Main Content -->
             </div>
-            <!-- End Main Content -->
+            <!-- End Content Wrapper -->
         </div>
-        <!-- End Content Wrapper -->
-    </div>
-    <!-- End Page Wrapper -->
+        <!-- End Page Wrapper -->
+    @else
+        @yield('content')
+    @endauth
 
     <script src="{{ asset('vendor/jquery/jquery.min.js') }}"></script>
     <script src="{{ asset('vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
