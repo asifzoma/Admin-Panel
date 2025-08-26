@@ -2,14 +2,18 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use App\Models\Company;
-use Illuminate\Support\Facades\Storage;
 use App\Http\Requests\CompanyStoreRequest;
 use App\Http\Requests\CompanyUpdateRequest;
+use App\Models\Company;
+use App\Traits\LogsActivity;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 class CompanyController extends Controller
 {
+    use LogsActivity;
+
     /**
      * Display a listing of the resource.
      */
@@ -19,13 +23,14 @@ class CompanyController extends Controller
 
         if ($request->filled('search')) {
             $search = $request->input('search');
-            $query->where(function($q) use ($search) {
+            $query->where(function ($q) use ($search) {
                 $q->where('name', 'like', "%{$search}%")
-                  ->orWhere('email', 'like', "%{$search}%");
+                    ->orWhere('email', 'like', "%{$search}%");
             });
         }
 
         $companies = $query->paginate(10)->withQueryString();
+
         return view('companies.index', compact('companies'));
     }
 
@@ -50,13 +55,8 @@ class CompanyController extends Controller
         }
         $company = Company::create($validated);
         // Log activity
-        \App\Models\ActivityLog::create([
-            'user_id' => auth()->id(),
-            'action' => 'create',
-            'subject_type' => 'Company',
-            'subject_id' => $company->id,
-            'description' => 'Created company #' . $company->id,
-        ]);
+        $this->logActivity('create', $company);
+
         return redirect()->route('companies.index')
             ->with('success', 'Company created successfully!');
     }
@@ -68,6 +68,7 @@ class CompanyController extends Controller
     {
         $company = Company::findOrFail($id);
         $employees = $company->employees()->paginate(10);
+
         return view('companies.show', compact('company', 'employees'));
     }
 
@@ -77,6 +78,7 @@ class CompanyController extends Controller
     public function edit(string $id)
     {
         $company = Company::findOrFail($id);
+
         return view('companies.edit', compact('company'));
     }
 
@@ -87,38 +89,33 @@ class CompanyController extends Controller
     {
         $company = Company::findOrFail($id);
         $validated = $request->validated();
-        
-        // Handle logo upload
-        if ($request->hasFile('logo')) {
-            try {
+
+        DB::transaction(function () use ($request, $company, &$validated) {
+            // Handle logo upload
+            if ($request->hasFile('logo')) {
                 // Delete old logo if it exists
                 if ($company->logo && Storage::disk('public')->exists($company->logo)) {
                     Storage::disk('public')->delete($company->logo);
                 }
-                
+
                 // Store the new logo with original filename
                 $file = $request->file('logo');
-                $filename = time() . '_' . $file->getClientOriginalName();
+                $filename = time().'_'.$file->getClientOriginalName();
                 $logoPath = $file->storeAs('logos', $filename, 'public');
-                
-                if (!$logoPath) {
-                    return back()->with('error', 'Failed to upload logo. Please try again.');
+
+                if (! $logoPath) {
+                    throw new \Exception('Failed to upload logo. Please try again.');
                 }
-                
+
                 $validated['logo'] = $logoPath;
-            } catch (\Exception $e) {
-                return back()->with('error', 'Error uploading logo: ' . $e->getMessage());
             }
-        }
-        $company->update($validated);
+
+            $company->update($validated);
+        });
+
         // Log activity
-        \App\Models\ActivityLog::create([
-            'user_id' => auth()->id(),
-            'action' => 'update',
-            'subject_type' => 'Company',
-            'subject_id' => $company->id,
-            'description' => 'Updated company #' . $company->id,
-        ]);
+        $this->logActivity('update', $company);
+
         return redirect()->route('companies.index')
             ->with('success', 'Company updated successfully!');
     }
@@ -129,27 +126,21 @@ class CompanyController extends Controller
     public function destroy(string $id)
     {
         $company = Company::findOrFail($id);
-        
+
         // Check if company has employees
         if ($company->employees()->count() > 0) {
             return redirect()->route('companies.index')
                 ->with('error', 'Cannot delete company. It has employees assigned to it. Please remove all employees first.');
         }
-        
+
         // Delete logo file if exists
         if ($company->logo) {
             Storage::disk('public')->delete($company->logo);
         }
-        
+
         $company->delete();
         // Log activity
-        \App\Models\ActivityLog::create([
-            'user_id' => auth()->id(),
-            'action' => 'delete',
-            'subject_type' => 'Company',
-            'subject_id' => $company->id,
-            'description' => 'Deleted company #' . $company->id,
-        ]);
+        $this->logActivity('delete', $company);
 
         return redirect()->route('companies.index')
             ->with('success', 'Company deleted successfully!');

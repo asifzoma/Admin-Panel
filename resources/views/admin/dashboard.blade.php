@@ -132,7 +132,7 @@
 @endsection 
 
 @push('scripts')
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="{{ secure_asset('vendor/chart.js/Chart.min.js') }}"></script>
 <script>
     const companyTrendCtx = document.getElementById('companyTrendChart').getContext('2d');
     const employeeTrendCtx = document.getElementById('employeeTrendChart').getContext('2d');

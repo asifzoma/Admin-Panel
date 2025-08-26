@@ -23,12 +23,13 @@ class CompanyUpdateRequest extends FormRequest
     public function rules(): array
     {
         $companyId = $this->route('company');
+
         return [
             'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:companies,email,' . $companyId,
+            'email' => 'required|email|unique:companies,email,'.$companyId,
             'address' => 'required|string|max:255',
             'website' => 'nullable|url',
-            'logo' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg,webp|max:2048|dimensions:min_width=100,min_height=100',
+            'logo' => 'sometimes|image|mimes:jpeg,png,jpg,gif,svg,webp|max:2048|dimensions:min_width=100,min_height=100',
         ];
     }
 }

@@ -17,7 +17,7 @@ class CompanyFactory extends Factory
     public function definition(): array
     {
         $created = fake()->dateTimeBetween('-5 years', 'now');
-        
+
         return [
             'name' => fake()->company(),
             'email' => fake()->unique()->companyEmail(),

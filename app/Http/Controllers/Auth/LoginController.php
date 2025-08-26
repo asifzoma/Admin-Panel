@@ -3,10 +3,8 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Redirect;
 
 class LoginController extends Controller
 {
@@ -30,10 +28,12 @@ class LoginController extends Controller
                 'action' => 'login',
                 'subject_type' => 'User',
                 'subject_id' => $user->id,
-                'description' => $user->name . ' logged in',
+                'description' => $user->name.' logged in',
             ]);
+
             return redirect()->intended('/admin');
         }
+
         return back()->withErrors([
             'email' => 'Invalid credentials.',
         ])->withInput($request->only('email'));
@@ -44,6 +44,7 @@ class LoginController extends Controller
         Auth::logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
+
         return redirect('/');
     }
-} 
+}

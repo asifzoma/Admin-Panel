@@ -2,20 +2,23 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Employee;
-use App\Models\Company;
-use Illuminate\Http\Request;
 use App\Http\Requests\EmployeeStoreRequest;
 use App\Http\Requests\EmployeeUpdateRequest;
+use App\Models\Company;
+use App\Models\Employee;
+use App\Traits\LogsActivity;
 
 class EmployeeController extends Controller
 {
+    use LogsActivity;
+
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
         $employees = Employee::with('company')->paginate(10);
+
         return view('employees.index', compact('employees'));
     }
 
@@ -25,6 +28,7 @@ class EmployeeController extends Controller
     public function create()
     {
         $companies = Company::orderBy('name')->get();
+
         return view('employees.create', compact('companies'));
     }
 
@@ -36,13 +40,8 @@ class EmployeeController extends Controller
         $validated = $request->validated();
         $employee = Employee::create($validated);
         // Log activity
-        \App\Models\ActivityLog::create([
-            'user_id' => auth()->id(),
-            'action' => 'create',
-            'subject_type' => 'Employee',
-            'subject_id' => $employee->id,
-            'description' => 'Created employee #' . $employee->id,
-        ]);
+        $this->logActivity('create', $employee);
+
         return redirect()->route('employees.index')->with('success', 'Employee created successfully.');
     }
 
@@ -52,6 +51,7 @@ class EmployeeController extends Controller
     public function show($id)
     {
         $employee = Employee::with('company')->findOrFail($id);
+
         return view('employees.show', compact('employee'));
     }
 
@@ -62,6 +62,7 @@ class EmployeeController extends Controller
     {
         $employee = Employee::findOrFail($id);
         $companies = Company::orderBy('name')->get();
+
         return view('employees.edit', compact('employee', 'companies'));
     }
 
@@ -74,13 +75,8 @@ class EmployeeController extends Controller
         $validated = $request->validated();
         $employee->update($validated);
         // Log activity
-        \App\Models\ActivityLog::create([
-            'user_id' => auth()->id(),
-            'action' => 'update',
-            'subject_type' => 'Employee',
-            'subject_id' => $employee->id,
-            'description' => 'Updated employee #' . $employee->id,
-        ]);
+        $this->logActivity('update', $employee);
+
         return redirect()->route('employees.show', $employee->id)->with('success', 'Employee updated successfully.');
     }
 
@@ -90,15 +86,9 @@ class EmployeeController extends Controller
     public function destroy($id)
     {
         $employee = Employee::findOrFail($id);
+        $this->logActivity('delete', $employee);
         $employee->delete();
-        // Log activity
-        \App\Models\ActivityLog::create([
-            'user_id' => auth()->id(),
-            'action' => 'delete',
-            'subject_type' => 'Employee',
-            'subject_id' => $employee->id,
-            'description' => 'Deleted employee #' . $employee->id,
-        ]);
+
         return redirect()->route('employees.index')->with('success', 'Employee deleted successfully.');
     }
 }

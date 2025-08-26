@@ -19,6 +19,8 @@ return new class extends Migration
             $table->unsignedBigInteger('subject_id')->nullable();
             $table->text('description')->nullable();
             $table->timestamps();
+
+            $table->index(['subject_type', 'subject_id']);
         });
     }
 

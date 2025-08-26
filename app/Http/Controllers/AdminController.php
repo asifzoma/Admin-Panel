@@ -2,59 +2,84 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\ActivityLog;
+use App\Models\Company;
+use App\Models\Employee;
+use Illuminate\Support\Facades\DB;
+
 class AdminController extends Controller
 {
     public function index()
     {
-        $companyCount = \App\Models\Company::count();
-        $employeeCount = \App\Models\Employee::count();
+        $companyCount = Company::count();
+        $employeeCount = Employee::count();
 
-        // Company creation trend (last 12 months) - SQLite compatible
-        $companyTrends = \App\Models\Company::selectRaw('strftime("%Y-%m", created_at) as month, COUNT(*) as count')
-            ->where('created_at', '>=', now()->subMonths(12))
+        // Company creation trend (last 12 months)
+        $companyTrends = Company::select(
+            DB::raw('strftime("%Y-%m", created_at) as month'),
+            DB::raw('COUNT(*) as count')
+        )
+            ->where('created_at', '>=', now()->subYear())
             ->groupBy('month')
             ->orderBy('month')
             ->pluck('count', 'month');
 
-        // Employee hire trend (last 12 months) - SQLite compatible
-        $employeeTrends = \App\Models\Employee::selectRaw('strftime("%Y-%m", hire_date) as month, COUNT(*) as count')
+        // Employee hire trend (last 12 months)
+        $employeeTrends = Employee::select(
+            DB::raw('strftime("%Y-%m", hire_date) as month'),
+            DB::raw('COUNT(*) as count')
+        )
             ->whereNotNull('hire_date')
-            ->where('hire_date', '>=', now()->subMonths(12))
+            ->where('hire_date', '>=', now()->subYear())
             ->groupBy('month')
             ->orderBy('month')
             ->pluck('count', 'month');
 
-        // Activity log trend (last 12 months) - SQLite compatible
-        $activityTrends = \App\Models\ActivityLog::selectRaw('strftime("%Y-%m", created_at) as month, COUNT(*) as count')
-            ->where('created_at', '>=', now()->subMonths(12))
+        // Activity log trend (last 12 months)
+        $activityTrends = ActivityLog::select(
+            DB::raw('strftime("%Y-%m", created_at) as month'),
+            DB::raw('COUNT(*) as count')
+        )
+            ->where('created_at', '>=', now()->subYear())
             ->groupBy('month')
             ->orderBy('month')
             ->pluck('count', 'month');
 
         // Most and least recently updated companies
-        $mostRecentCompanies = \App\Models\Company::orderBy('updated_at', 'desc')->take(5)->get();
-        $leastRecentCompanies = \App\Models\Company::orderBy('updated_at', 'asc')->take(5)->get();
+        $mostRecentCompanies = Company::latest('updated_at')->take(5)->get();
+        $leastRecentCompanies = Company::oldest('updated_at')->take(5)->get();
 
         // Top 5 companies with most employees
-        $largestCompanies = \App\Models\Company::withCount('employees')
-            ->orderBy('employees_count', 'desc')
+        $largestCompanies = Company::withCount('employees')
+            ->orderByDesc('employees_count')
             ->take(5)
             ->get();
 
-        // Login frequency (last 30 days) - SQLite compatible
-        $loginFrequency = \App\Models\ActivityLog::where('action', 'login')
+        // Login frequency (last 30 days)
+        $loginFrequency = ActivityLog::where('action', 'login')
             ->where('created_at', '>=', now()->subDays(30))
-            ->selectRaw('date(created_at) as day, COUNT(*) as count')
+            ->select(
+                DB::raw('date(created_at) as day'),
+                DB::raw('COUNT(*) as count')
+            )
             ->groupBy('day')
             ->orderBy('day')
             ->pluck('count', 'day');
 
         // Last 10 recent actions
-        $recentActions = \App\Models\ActivityLog::with('user')
-            ->orderBy('created_at', 'desc')
-            ->take(10)
-            ->get();
+        $recentActions = ActivityLog::with('user')->latest()->take(10)->get();
 
-        return view('admin.dashboard', compact('companyCount', 'employeeCount', 'companyTrends', 'employeeTrends', 'activityTrends', 'mostRecentCompanies', 'leastRecentCompanies', 'largestCompanies', 'loginFrequency', 'recentActions'));
+        return view('admin.dashboard', compact(
+            'companyCount',
+            'employeeCount',
+            'companyTrends',
+            'employeeTrends',
+            'activityTrends',
+            'mostRecentCompanies',
+            'leastRecentCompanies',
+            'largestCompanies',
+            'loginFrequency',
+            'recentActions'
+        ));
     }
-} 
+}

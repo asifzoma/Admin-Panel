@@ -1,11 +1,13 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\{
+    AdminController,
+    Auth\LoginController,
+    CompanyController,
+    EmployeeController
+};
 use Illuminate\Support\Facades\Auth;
-use App\Http\Controllers\Auth\LoginController;
-use App\Http\Controllers\AdminController;
-use App\Http\Controllers\CompanyController;
-use App\Http\Controllers\EmployeeController;
+use Illuminate\Support\Facades\Route;
 
 // Authentication routes
 Route::get('login', [LoginController::class, 'showLoginForm'])->name('login');
@@ -24,6 +26,7 @@ Route::get('/', function () {
     if (Auth::check() && Auth::user()->is_admin) {
         return redirect()->route('admin.dashboard');
     }
+
     return redirect()->route('login');
 });
 

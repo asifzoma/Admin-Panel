@@ -16,10 +16,12 @@ return new class extends Migration
             $table->unsignedBigInteger('company_id')->index(); // Add index here
             $table->string('first_name');
             $table->string('last_name');
-            $table->string('email')->unique();
+            $table->string('email');
             $table->string('phone')->nullable();
             $table->foreign('company_id')->references('id')->on('companies')->onDelete('cascade');
             $table->timestamps();
+
+            $table->unique(['company_id', 'email']);
         });
     }
 

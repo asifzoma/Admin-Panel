@@ -2,11 +2,11 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Seeder;
 use App\Models\ActivityLog;
-use App\Models\User;
 use App\Models\Company;
 use App\Models\Employee;
+use App\Models\User;
+use Illuminate\Database\Seeder;
 use Illuminate\Support\Carbon;
 
 class ActivityLogSeeder extends Seeder
@@ -31,7 +31,7 @@ class ActivityLogSeeder extends Seeder
                 'action' => 'login',
                 'subject_type' => 'User',
                 'subject_id' => $user->id,
-                'description' => $user->name . ' logged in',
+                'description' => $user->name.' logged in',
                 'created_at' => $user->last_login_at ?? now(),
                 'updated_at' => $user->last_login_at ?? now(),
             ]);
@@ -45,7 +45,7 @@ class ActivityLogSeeder extends Seeder
                         'action' => $action,
                         'subject_type' => $subject['type'],
                         'subject_id' => $model->id,
-                        'description' => $action . ' ' . strtolower($subject['type']) . ' #' . $model->id,
+                        'description' => $action.' '.strtolower($subject['type']).' #'.$model->id,
                         'created_at' => Carbon::parse($model->created_at)->addDays(rand(0, 365)),
                         'updated_at' => Carbon::parse($model->created_at)->addDays(rand(0, 365)),
                     ]);
