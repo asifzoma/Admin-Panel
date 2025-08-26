@@ -4,6 +4,9 @@
     </IfModule>
 
     RewriteEngine On
+    
+    # Add this line for subdirectory
+    RewriteBase /admin-panel/
 
     # Handle Authorization Header
     RewriteCond %{HTTP:Authorization} .
