@@ -42,6 +42,7 @@ return array(
     'App\\Providers\\RouteServiceProvider' => $baseDir . '/app/Providers/RouteServiceProvider.php',
     'App\\Repositories\\ConfigurationJsonRepository' => $vendorDir . '/laravel/pint/app/Repositories/ConfigurationJsonRepository.php',
     'App\\Repositories\\GitPathsRepository' => $vendorDir . '/laravel/pint/app/Repositories/GitPathsRepository.php',
+    'App\\Traits\\LogsActivity' => $baseDir . '/app/Traits/LogsActivity.php',
     'App\\ValueObjects\\Issue' => $vendorDir . '/laravel/pint/app/ValueObjects/Issue.php',
     'Attribute' => $vendorDir . '/symfony/polyfill-php80/Resources/stubs/Attribute.php',
     'Brick\\Math\\BigDecimal' => $vendorDir . '/brick/math/src/BigDecimal.php',
