@@ -6,7 +6,7 @@
     RewriteEngine On
     
     # Add this line for subdirectory
-    RewriteBase /admin-panel/
+    RewriteBase /laravel.asif-ahmad.netmatters-scs.co.uk/
 
     # Handle Authorization Header
     RewriteCond %{HTTP:Authorization} .

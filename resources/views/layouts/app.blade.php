@@ -3,10 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Admin Genie</title>
-    <link rel="icon" type="image/x-icon" href="/favicon_io/favicon.ico">
-    <link href="{{ asset('vendor/fontawesome-free/css/all.min.css') }}" rel="stylesheet">
-    <link href="{{ asset('css/sb-admin-2.min.css') }}" rel="stylesheet">
+    
+    <!-- Favicon -->
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('favicon_io/apple-touch-icon.png') }}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('favicon_io/favicon-32x32.png') }}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('favicon_io/favicon-16x16.png') }}">
+    <link rel="manifest" href="{{ asset('favicon_io/site.webmanifest') }}">
+    
+    <!-- Styles -->
+    <link href="{{ secure_asset('vendor/fontawesome-free/css/all.min.css') }}" rel="stylesheet">
+    <link href="{{ secure_asset('css/sb-admin-2.min.css') }}" rel="stylesheet">
+    
+    <!-- Preload critical assets -->
+    <link rel="preload" href="{{ secure_asset('vendor/jquery/jquery.min.js') }}" as="script">
+    <link rel="preload" href="{{ secure_asset('vendor/bootstrap/js/bootstrap.bundle.min.js') }}" as="script">
+    <link rel="preload" href="{{ secure_asset('js/sb-admin-2.min.js') }}" as="script">
 </head>
 <body id="page-top" class="{{ !auth()->check() ? 'bg-gradient-primary' : '' }}">
     @auth
@@ -27,6 +40,34 @@
                     <!-- Begin Page Content -->
                     <div class="container-fluid">
                         @yield('breadcrumbs')
+                        @if(session('success'))
+                            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                                {{ session('success') }}
+                                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                        @endif
+                        @if(session('error'))
+                            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                {{ session('error') }}
+                                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                        @endif
+                        @if($errors->any())
+                            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                <ul class="mb-0">
+                                    @foreach($errors->all() as $error)
+                                        <li>{{ $error }}</li>
+                                    @endforeach
+                                </ul>
+                                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                        @endif
                         @yield('content')
                     </div>
                     <!-- End Page Content -->
@@ -40,12 +81,20 @@
         @yield('content')
     @endauth
 
-    <script src="{{ asset('vendor/jquery/jquery.min.js') }}"></script>
-    <script src="{{ asset('vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
-    <script src="{{ asset('js/sb-admin-2.min.js') }}"></script>
+    <!-- Scripts -->
+    <script src="{{ secure_asset('vendor/jquery/jquery.min.js') }}"></script>
+    <script src="{{ secure_asset('vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
+    <script src="{{ secure_asset('js/sb-admin-2.min.js') }}"></script>
     @stack('scripts')
     
     <script>
+        // Set CSRF token for all AJAX requests
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+
         // Helper function to handle company logo display with fallback
         function displayCompanyLogo(imgElement, logoPath, companyName, size = '50px') {
             if (logoPath && logoPath.trim() !== '') {
@@ -58,14 +107,14 @@
                 
                 // Add error handler for broken images
                 imgElement.onerror = function() {
-                    this.src = '{{ asset("images/default-company.svg") }}';
+                    this.src = '{{ secure_asset("images/default-company.svg") }}';
                     this.alt = 'Default company logo';
                     this.classList.remove('img-thumbnail');
                     this.classList.add('default-logo');
                 };
             } else {
                 // No logo provided, show default
-                imgElement.src = '{{ asset("images/default-company.svg") }}';
+                imgElement.src = '{{ secure_asset("images/default-company.svg") }}';
                 imgElement.alt = 'Default company logo';
                 imgElement.style.width = size;
                 imgElement.style.height = size;
@@ -532,4 +581,4 @@
         }
     </style>
 </body>
-</html> 
+</html>
