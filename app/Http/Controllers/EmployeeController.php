@@ -2,93 +2,67 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Employee;
+use App\Models\Company;
 use App\Http\Requests\EmployeeStoreRequest;
 use App\Http\Requests\EmployeeUpdateRequest;
-use App\Models\Company;
-use App\Models\Employee;
 use App\Traits\LogsActivity;
+use Illuminate\Support\Facades\DB;
 
 class EmployeeController extends Controller
 {
     use LogsActivity;
 
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-        $employees = Employee::with('company')->paginate(10);
+        $employees = Employee::with('company')
+            ->latest()
+            ->paginate(10); // Changed from get() to paginate()
 
         return view('employees.index', compact('employees'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
-        $companies = Company::orderBy('name')->get();
-
+        $companies = Company::all();
         return view('employees.create', compact('companies'));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(EmployeeStoreRequest $request)
     {
-        $validated = $request->validated();
-        $employee = Employee::create($validated);
-        // Log activity
-        $this->logActivity('create', $employee);
-
-        return redirect()->route('employees.index')->with('success', 'Employee created successfully.');
+        $employee = Employee::create($request->validated());
+        
+        $this->logActivity('Created employee: ' . $employee->first_name . ' ' . $employee->last_name);
+        
+        return redirect()->route('employees.index')
+            ->with('success', 'Employee created successfully.');
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show($id)
+    public function edit(Employee $employee)
     {
-        $employee = Employee::with('company')->findOrFail($id);
-
-        return view('employees.show', compact('employee'));
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit($id)
-    {
-        $employee = Employee::findOrFail($id);
-        $companies = Company::orderBy('name')->get();
-
+        $companies = Company::all();
         return view('employees.edit', compact('employee', 'companies'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(EmployeeUpdateRequest $request, $id)
+    public function update(EmployeeUpdateRequest $request, Employee $employee)
     {
-        $employee = Employee::findOrFail($id);
-        $validated = $request->validated();
-        $employee->update($validated);
-        // Log activity
-        $this->logActivity('update', $employee);
-
-        return redirect()->route('employees.show', $employee->id)->with('success', 'Employee updated successfully.');
+        $employee->update($request->validated());
+        
+        $this->logActivity('Updated employee: ' . $employee->first_name . ' ' . $employee->last_name);
+        
+        return redirect()->route('employees.index')
+            ->with('success', 'Employee updated successfully.');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy($id)
+    public function destroy(Employee $employee)
     {
-        $employee = Employee::findOrFail($id);
-        $this->logActivity('delete', $employee);
-        $employee->delete();
+        DB::transaction(function () use ($employee) {
+            $name = $employee->first_name . ' ' . $employee->last_name;
+            $employee->delete();
+            $this->logActivity('Deleted employee: ' . $name);
+        });
 
-        return redirect()->route('employees.index')->with('success', 'Employee deleted successfully.');
+        return redirect()->route('employees.index')
+            ->with('success', 'Employee deleted successfully.');
     }
 }
