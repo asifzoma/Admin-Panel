@@ -1,80 +1,62 @@
 <?php
-echo "Starting cleanup and setup...<br>";
+echo "Starting cleanup and setup...\n";
 
 // Clear Laravel log file
 $logFile = dirname(__DIR__) . '/storage/logs/laravel.log';
 if (file_exists($logFile)) {
-    if (file_put_contents($logFile, '') !== false) {
-        echo "Laravel log file cleared.<br>";
-    } else {
-        echo "Could not clear Laravel log file - check permissions.<br>";
-    }
-} else {
-    echo "No Laravel log file found.<br>";
+    file_put_contents($logFile, '');
+    echo "Laravel log file cleared.\n";
 }
 
 // Clear compiled views
-$viewPath = dirname(__DIR__) . '/storage/framework/views';
-if (is_dir($viewPath)) {
-    array_map('unlink', glob("$viewPath/*"));
-    echo "Compiled views cleared.<br>";
+$viewsPath = dirname(__DIR__) . '/storage/framework/views';
+if (is_dir($viewsPath)) {
+    $files = glob($viewsPath . '/*');
+    foreach ($files as $file) {
+        if (is_file($file)) {
+            unlink($file);
+        }
+    }
+    echo "Compiled views cleared.\n";
 }
 
-// Clear cache
-$cachePath = dirname(__DIR__) . '/bootstrap/cache';
+// Clear cache files
+$cachePath = dirname(__DIR__) . '/storage/framework/cache';
 if (is_dir($cachePath)) {
-    array_map('unlink', glob("$cachePath/*"));
-    echo "Cache files cleared.<br>";
-}
-
-// Create SQLite database if it doesn't exist
-$dbPath = dirname(__DIR__) . '/database/database.sqlite';
-if (!file_exists($dbPath)) {
-    if (touch($dbPath)) {
-        chmod($dbPath, 0664);
-        echo "SQLite database created.<br>";
-    } else {
-        echo "Failed to create SQLite database.<br>";
+    $files = glob($cachePath . '/*');
+    foreach ($files as $file) {
+        if (is_file($file)) {
+            unlink($file);
+        }
     }
+    echo "Cache files cleared.\n";
 }
 
-// Create storage link if it doesn't exist
-$publicStorage = __DIR__ . '/storage';
-$storageApp = dirname(__DIR__) . '/storage/app/public';
-
-if (!file_exists($publicStorage)) {
-    if (symlink($storageApp, $publicStorage)) {
-        echo "Storage link created.<br>";
-    } else {
-        echo "Failed to create storage link.<br>";
-    }
-}
-
-// Set directory permissions
-$dirsToChmod = [
-    '../storage',
-    '../storage/app',
-    '../storage/app/public',
-    '../storage/framework',
-    '../storage/framework/cache',
-    '../storage/framework/sessions',
-    '../storage/framework/views',
-    '../storage/logs',
-    '../bootstrap/cache',
-    '../database'
+// Set permissions for storage directories
+$storagePaths = [
+    'storage',
+    'storage/app',
+    'storage/app/public',
+    'storage/framework',
+    'storage/framework/cache',
+    'storage/framework/sessions',
+    'storage/framework/views',
+    'storage/logs',
+    'bootstrap/cache',
+    'database'
 ];
 
-foreach ($dirsToChmod as $dir) {
-    $path = realpath(__DIR__ . '/' . $dir);
-    if ($path && is_dir($path)) {
-        chmod($path, 0775);
-        echo "Set permissions for {$dir}.<br>";
+foreach ($storagePaths as $path) {
+    $fullPath = dirname(__DIR__) . '/' . $path;
+    if (is_dir($fullPath)) {
+        chmod($fullPath, 0775);
+        echo "Set permissions for $path.\n";
     }
 }
 
-echo "Cleanup and setup completed!<br>";
-echo "Next steps:<br>";
-echo "1. Visit /simple-setup.php to initialize the database<br>";
-echo "2. Delete cleanup-and-setup.php and simple-setup.php for security<br>";
-echo "3. Rename .htaccess.bak files back to .htaccess<br>";
+echo "Cleanup and setup completed!\n";
+echo "Next steps:\n";
+echo "1. Visit /simple-setup.php to initialize the database\n";
+echo "2. Delete cleanup-and-setup.php and simple-setup.php for security\n";
+echo "3. Rename .htaccess.bak files back to .htaccess\n";
 ?>

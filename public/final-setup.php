@@ -83,7 +83,6 @@ if (symlink($storagePath, $publicStoragePath)) {
 echo "<h2>Step 4: Initializing Database</h2>\n";
 
 $dbPath = dirname(__DIR__) . '/database/database.sqlite';
-$setupSqlPath = dirname(__DIR__) . '/database/database-setup.sql';
 
 // Create database file if it doesn't exist
 if (!file_exists($dbPath)) {
@@ -92,24 +91,19 @@ if (!file_exists($dbPath)) {
     echo "<p>✓ Created database file</p>\n";
 }
 
-// Initialize database with schema
-if (file_exists($setupSqlPath)) {
-    try {
-        $pdo = new PDO('sqlite:' . $dbPath);
-        $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-        
-        $sql = file_get_contents($setupSqlPath);
-        if (!empty($sql)) {
-            $pdo->exec($sql);
-            echo "<p>✓ Database schema initialized successfully</p>\n";
-        } else {
-            echo "<p>⚠ SQL file is empty</p>\n";
-        }
-    } catch (Exception $e) {
-        echo "<p>⚠ Database initialization error: " . htmlspecialchars($e->getMessage()) . "</p>\n";
-    }
-} else {
-    echo "<p>⚠ Database setup SQL file not found</p>\n";
+// Test database connection
+try {
+    $pdo = new PDO('sqlite:' . $dbPath);
+    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    
+    $stmt = $pdo->query("SELECT name FROM sqlite_master WHERE type='table'");
+    $tables = $stmt->fetchAll(PDO::FETCH_COLUMN);
+    
+    echo "<p>✓ Database connection successful</p>\n";
+    echo "<p>✓ Found " . count($tables) . " tables: " . implode(', ', $tables) . "</p>\n";
+    
+} catch (Exception $e) {
+    echo "<p>⚠ Database connection failed: " . htmlspecialchars($e->getMessage()) . "</p>\n";
 }
 
 // 5. Create .env file if it doesn't exist
@@ -213,23 +207,6 @@ foreach ($directories as $dir) {
         mkdir($fullPath, 0775, true);
         echo "<p>✓ Created directory: $dir</p>\n";
     }
-}
-
-// 8. Test database connection
-echo "<h2>Step 8: Testing Database Connection</h2>\n";
-
-try {
-    $pdo = new PDO('sqlite:' . $dbPath);
-    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-    
-    $stmt = $pdo->query("SELECT name FROM sqlite_master WHERE type='table'");
-    $tables = $stmt->fetchAll(PDO::FETCH_COLUMN);
-    
-    echo "<p>✓ Database connection successful</p>\n";
-    echo "<p>✓ Found " . count($tables) . " tables: " . implode(', ', $tables) . "</p>\n";
-    
-} catch (Exception $e) {
-    echo "<p>⚠ Database connection failed: " . htmlspecialchars($e->getMessage()) . "</p>\n";
 }
 
 echo "<h2>Setup Complete!</h2>\n";

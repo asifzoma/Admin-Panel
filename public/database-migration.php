@@ -91,7 +91,7 @@ try {
             updated_at TIMESTAMP NULL,
             FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE SET NULL
         )",
-
+        
         'password_reset_tokens' => "CREATE TABLE IF NOT EXISTS password_reset_tokens (
             email VARCHAR(255) PRIMARY KEY,
             token VARCHAR(255) NOT NULL,
@@ -166,19 +166,8 @@ try {
         echo "<p>✓ Inserted sample companies</p>\n";
     }
     
-    // Insert sample employees if not exists
-    $employeeCount = $pdo->query("SELECT COUNT(*) FROM employees")->fetchColumn();
-    if ($employeeCount == 0) {
-        $pdo->exec("INSERT INTO employees (company_id, first_name, last_name, email, phone, position, department, hire_date, salary, status, created_at, updated_at) VALUES 
-        (1, 'John', 'Doe', 'john.doe@techsolutions.com', '+1-555-0001', 'Senior Developer', 'Engineering', '2020-01-15', 85000.00, 'active', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-        (1, 'Jane', 'Smith', 'jane.smith@techsolutions.com', '+1-555-0002', 'Product Manager', 'Product', '2019-03-20', 95000.00, 'active', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-        (2, 'Mike', 'Johnson', 'mike.johnson@globalmfg.com', '+1-555-0003', 'Production Supervisor', 'Operations', '2015-06-10', 65000.00, 'active', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-        (3, 'Sarah', 'Wilson', 'sarah.wilson@creativestudio.com', '+1-555-0004', 'Lead Designer', 'Design', '2021-02-28', 75000.00, 'active', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)");
-        echo "<p>✓ Inserted sample employees</p>\n";
-    }
-    
     echo "<p>✓ Database migration completed successfully!</p>\n";
-    echo "<p><a href='/'>Test your application now</a></p>\n";
+    echo "<p><a href='/fix-employees-table.php'>Next: Fix Employees Table</a></p>\n";
     
 } catch (Exception $e) {
     echo "<p>⚠ Database migration error: " . htmlspecialchars($e->getMessage()) . "</p>\n";
